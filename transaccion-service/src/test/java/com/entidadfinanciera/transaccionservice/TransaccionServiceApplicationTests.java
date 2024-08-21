@@ -1,4 +1,4 @@
-package com.entidadfinanciera.transaccion_service;
+package com.entidadfinanciera.transaccionservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
