@@ -5,10 +5,12 @@ import com.entidadfinanciera.productoservice.model.Producto;
 import com.entidadfinanciera.productoservice.service.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,23 +51,27 @@ public class ProductoController {
 	    }
 
 	 @PostMapping
-	    public ResponseEntity<?> createProducto(@Valid @RequestBody Producto producto) {
-	        Map<String, Object> response = new HashMap<>();
-	        try {
-	            Producto newProducto = productoService.createProducto(producto);
-	            response.put("mensaje", "Producto creado exitosamente");
-	            response.put("producto", newProducto);
-	            return ResponseEntity.ok(response);
-	        } catch (IllegalArgumentException e) {
-	            response.put("mensaje", "Error al crear el producto");
-	            response.put("error", e.getMessage());
-	            return ResponseEntity.ok(response);
-	        } catch (Exception e) {
-	            response.put("mensaje", "Error inesperado al crear el producto");
-	            response.put("error", e.getMessage());
-	            return ResponseEntity.ok(response);
-	        }
-	    }
+	 public ResponseEntity<?> createProducto(@RequestBody Producto producto) {
+	     Map<String, Object> response = new HashMap<>();
+	     try {
+	         Producto newProducto = productoService.createProducto(producto);
+	         response.put("mensaje", "Producto creado exitosamente");
+	         response.put("producto", newProducto);
+	         return ResponseEntity.ok(response);
+	     } catch (IllegalArgumentException e) {
+	         response.put("mensaje", "Error al crear el producto");
+	         response.put("error", e.getMessage());
+	         return ResponseEntity.ok(response);
+	     } catch (DataIntegrityViolationException e) {
+	         response.put("mensaje", "Error al crear el producto: Violación de integridad de datos");
+	         response.put("error", e.getMessage());
+	         return ResponseEntity.ok(response);
+	     } catch (Exception e) {
+	         response.put("mensaje", "Error inesperado al crear el producto");
+	         response.put("error", e.getMessage());
+	         return ResponseEntity.ok(response);
+	     }
+	 }
 
 	 @PutMapping("/{id}")
 	    public ResponseEntity<?> updateProducto(@PathVariable Long id, @Valid @RequestBody Producto productoDetails) {
@@ -123,6 +129,38 @@ public class ProductoController {
 	    List<Producto> productos = productoService.findByClienteId(clienteId);
 	    List<ProductoDTO> productoDTOs = productos.stream().map(this::convertToDTO).collect(Collectors.toList());
 	    return ResponseEntity.ok(productoDTOs);
+	}
+	
+	@PostMapping("/{id}/actualizar-saldo")
+	public ResponseEntity<?> actualizarSaldo(@PathVariable Long id, @RequestBody BigDecimal monto) {
+		
+		System.out.println("ENTRO ACA A ACTUALIZAR SALDO");
+	    Map<String, Object> response = new HashMap<>();
+	    try {
+	        Producto producto = productoService.getProductoById(id)
+	            .orElseThrow(() -> new IllegalArgumentException("No se encontró el producto con ID: " + id));
+
+	        BigDecimal nuevoSaldo = producto.getSaldo().add(monto);
+	        
+	        if (producto.getTipoCuenta() == Producto.TipoCuenta.AHORROS && nuevoSaldo.compareTo(BigDecimal.ZERO) < 0) {
+	            throw new IllegalArgumentException("Las cuentas de ahorro no pueden tener saldo negativo");
+	        }
+
+	        producto.setSaldo(nuevoSaldo);
+	        Producto productoActualizado = productoService.updateProducto(id, producto);
+
+	        response.put("mensaje", "Saldo actualizado exitosamente");
+	        response.put("producto", productoActualizado);
+	        return ResponseEntity.ok(response);
+	    } catch (IllegalArgumentException e) {
+	        response.put("mensaje", "Error al actualizar el saldo");
+	        response.put("error", e.getMessage());
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+	    } catch (Exception e) {
+	        response.put("mensaje", "Error inesperado al actualizar el saldo");
+	        response.put("error", e.getMessage());
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+	    }
 	}
 
 

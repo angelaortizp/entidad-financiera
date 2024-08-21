@@ -42,12 +42,24 @@ public class ClienteController {
 
 	@PostMapping
 	public ResponseEntity<?> createCliente(@RequestBody Cliente cliente) {
-		try {
-			Cliente newCliente = clienteService.createCliente(cliente);
-			return ResponseEntity.ok(newCliente);
-		} catch (IllegalArgumentException e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
+	    Map<String, Object> response = new HashMap<>();
+	    try {
+	        Cliente newCliente = clienteService.createCliente(cliente);
+	        response.put("mensaje", "Cliente creado exitosamente");
+	        response.put("cliente", newCliente);
+	        return ResponseEntity.ok(response);
+	    } catch (IllegalArgumentException e) {
+	        response.put("mensaje", "Error al crear el cliente");
+	        response.put("error", e.getMessage());
+	        return ResponseEntity.ok(response);
+	    } catch (DataIntegrityViolationException e) {
+	        response.put("mensaje", "Error al crear el cliente: El número de identificación ya existe");
+	        return ResponseEntity.ok(response);
+	    } catch (Exception e) {
+	        response.put("mensaje", "Error inesperado al crear el cliente");
+	        response.put("error", e.getMessage());
+	        return ResponseEntity.ok(response);
+	    }
 	}
 
 	 @PutMapping("/{id}")
@@ -94,12 +106,27 @@ public class ClienteController {
 	        }
 	    }
 
-	@GetMapping("/{clienteId}/productos")
-	public ResponseEntity<List<ProductoDTO>> getProductosDelCliente(@PathVariable Long clienteId) {
-		List<ProductoDTO> productos = clienteService.getProductosDelCliente(clienteId);
-		if (productos.isEmpty()) {
-			return ResponseEntity.noContent().build();
-		}
-		return ResponseEntity.ok(productos);
-	}
+	 @GetMapping("/{clienteId}/productos")
+	 public ResponseEntity<?> getProductosDelCliente(@PathVariable Long clienteId) {
+	     Map<String, Object> response = new HashMap<>();
+	     try {
+	         List<ProductoDTO> productos = clienteService.getProductosDelCliente(clienteId);
+	         if (productos.isEmpty()) {
+	             response.put("mensaje", "El cliente no tiene productos asociados");
+	             return ResponseEntity.ok(response);
+	         } else {
+	             response.put("mensaje", "Productos obtenidos exitosamente");
+	             response.put("productos", productos);
+	             return ResponseEntity.ok(response);
+	         }
+	     } catch (IllegalArgumentException e) {
+	         response.put("mensaje", "Error al obtener los productos del cliente");
+	         response.put("error", "No se encontró el cliente con el ID: " + clienteId);
+	         return ResponseEntity.ok(response);
+	     } catch (Exception e) {
+	         response.put("mensaje", "Error inesperado al obtener los productos del cliente");
+	         response.put("error", e.getMessage());
+	         return ResponseEntity.ok(response);
+	     }
+	 }
 }

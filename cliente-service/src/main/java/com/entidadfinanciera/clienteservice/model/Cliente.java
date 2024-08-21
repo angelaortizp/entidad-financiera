@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.List;
 
 @Entity
@@ -56,6 +57,11 @@ public class Cliente {
 	@PreUpdate
 	protected void onUpdate() {
 		fechaModificacion = LocalDateTime.now();
+	}
+
+	@AssertTrue(message = "El cliente debe ser mayor de edad")
+	private boolean isMayorDeEdad() {
+		return Period.between(fechaNacimiento, LocalDate.now()).getYears() >= 18;
 	}
 
 	public Long getId() {

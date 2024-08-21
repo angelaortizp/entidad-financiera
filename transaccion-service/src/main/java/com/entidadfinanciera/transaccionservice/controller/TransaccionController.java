@@ -103,4 +103,71 @@ public class TransaccionController {
 			return ResponseEntity.ok(response);
 		}
 	}
+	
+	 @PostMapping("/consignar")
+	    public ResponseEntity<?> consignar(@RequestBody Transaccion transaccion) {
+	        Map<String, Object> response = new HashMap<>();
+	        try {
+	            transaccion.setTipoTransaccion(Transaccion.TipoTransaccion.CONSIGNACION);
+	            Transaccion resultado = transaccionService.realizarTransaccion(transaccion);
+	            response.put("mensaje", "Consignación realizada exitosamente");
+	            response.put("transaccion", resultado);
+	            return ResponseEntity.ok(response);
+	        } catch (Exception e) {
+	            response.put("mensaje", "Error al realizar la consignación");
+	            response.put("detalleError", e.getMessage());
+	            return ResponseEntity.ok(response);
+	        }
+	    }
+
+	    @PostMapping("/retirar")
+	    public ResponseEntity<?> retirar(@RequestBody Transaccion transaccion) {
+	        Map<String, Object> response = new HashMap<>();
+	        try {
+	            transaccion.setTipoTransaccion(Transaccion.TipoTransaccion.RETIRO);
+	            Transaccion resultado = transaccionService.realizarTransaccion(transaccion);
+	            response.put("mensaje", "Retiro realizado exitosamente");
+	            response.put("transaccion", resultado);
+	            return ResponseEntity.ok(response);
+	        } catch (Exception e) {
+	            response.put("mensaje", "Error al realizar el retiro");
+	            response.put("detalleError", e.getMessage());
+	            return ResponseEntity.ok(response);
+	        }
+	    }
+
+	    @PostMapping("/transferir")
+	    public ResponseEntity<?> transferir(@RequestBody Transaccion transaccion) {
+	        Map<String, Object> response = new HashMap<>();
+	        try {
+	            transaccion.setTipoTransaccion(Transaccion.TipoTransaccion.TRANSFERENCIA);
+	            Transaccion resultado = transaccionService.realizarTransaccion(transaccion);
+	            response.put("mensaje", "Transferencia realizada exitosamente");
+	            response.put("transaccion", resultado);
+	            return ResponseEntity.ok(response);
+	        } catch (Exception e) {
+	            response.put("mensaje", "Error al realizar la transferencia");
+	            response.put("detalleError", e.getMessage());
+	            return ResponseEntity.ok(response);
+	        }
+	    }
+
+	    @GetMapping("/producto/{productoId}")
+	    public ResponseEntity<?> getTransaccionesByProductoId(@PathVariable Long productoId) {
+	        Map<String, Object> response = new HashMap<>();
+	        try {
+	            List<Transaccion> transacciones = transaccionService.getTransaccionesByProductoId(productoId);
+	            if (transacciones.isEmpty()) {
+	                response.put("mensaje", "No se encontraron transacciones para el producto con ID: " + productoId);
+	            } else {
+	                response.put("mensaje", "Transacciones obtenidas exitosamente");
+	                response.put("transacciones", transacciones);
+	            }
+	            return ResponseEntity.ok(response);
+	        } catch (Exception e) {
+	            response.put("mensaje", "Error al obtener las transacciones");
+	            response.put("detalleError", e.getMessage());
+	            return ResponseEntity.ok(response);
+	        }
+	    }
 }

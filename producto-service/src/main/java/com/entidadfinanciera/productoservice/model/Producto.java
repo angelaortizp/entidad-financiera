@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Random;
 
 @Entity
 @Table(name = "producto")
@@ -18,8 +19,9 @@ public class Producto {
     @Column(name = "tipo_cuenta", nullable = false)
     private TipoCuenta tipoCuenta;
 
-    @NotBlank
-    @Column(name = "numero_cuenta", nullable = false, unique = true)
+    @NotNull
+    @Pattern(regexp = "^(53|33)\\d{8}$", message = "El número de cuenta debe tener 10 dígitos y comenzar con 53 para ahorros o 33 para corriente")
+    @Column(name = "numero_cuenta", unique = true, length = 10)
     private String numeroCuenta;
 
     @NotNull
@@ -28,7 +30,7 @@ public class Producto {
     private EstadoCuenta estado;
 
     @NotNull
-    @DecimalMin(value = "0.0", inclusive = true)
+    @DecimalMin(value = "0.0", inclusive = true, message = "El saldo no puede ser negativo")
     @Column(nullable = false)
     private BigDecimal saldo;
 
@@ -56,7 +58,14 @@ public class Producto {
 
     @PrePersist
     protected void onCreate() {
-        fechaCreacion = LocalDateTime.now();
+    	this.numeroCuenta = generarNumeroCuenta();
+        this.fechaCreacion = LocalDateTime.now();
+    }
+    
+    private String generarNumeroCuenta() {
+        String prefix = this.tipoCuenta == TipoCuenta.AHORROS ? "53" : "33";
+        String randomPart = String.format("%08d", new Random().nextInt(100000000));
+        return prefix + randomPart;
     }
 
     @PreUpdate
