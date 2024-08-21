@@ -90,17 +90,26 @@ public class ProductoController {
 	    }
 
 
-	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deleteProducto(@PathVariable Long id) {
-		try {
-			productoService.deleteProducto(id);
-			return ResponseEntity.ok().build();
-		} catch (IllegalArgumentException e) {
-			return ResponseEntity.notFound().build();
-		} catch (IllegalStateException e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
-	}
+	 @DeleteMapping("/{id}")
+	    public ResponseEntity<?> deleteProducto(@PathVariable Long id) {
+	        Map<String, Object> response = new HashMap<>();
+	        try {
+	            productoService.deleteProducto(id);
+	            response.put("mensaje", "Producto eliminado exitosamente");
+	            return ResponseEntity.ok(response);
+	        } catch (IllegalArgumentException e) {
+	            response.put("mensaje", "No se encontró el producto con el ID: " + id);
+	            return ResponseEntity.ok(response);
+	        } catch (IllegalStateException e) {
+	            response.put("mensaje", "No se puede eliminar el producto");
+	            response.put("error", e.getMessage());
+	            return ResponseEntity.ok(response);
+	        } catch (Exception e) {
+	            response.put("mensaje", "Error inesperado al eliminar el producto");
+	            response.put("error", e.getMessage());
+	            return ResponseEntity.ok(response);
+	        }
+	    }
 
 	@GetMapping("/cliente/{clienteId}/tiene-productos")
 	public boolean clienteTieneProductos(@PathVariable Long clienteId) {
