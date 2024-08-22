@@ -75,6 +75,8 @@ public class TransaccionService {
 
 	@Transactional
 	public Transaccion createTransaccion(Transaccion transaccion) {
+		
+		logger.error("Creando Transaccion: {}", transaccion.getTipoTransaccion());
 
 		if (!productoExists(transaccion.getProductoOrigenId())) {
 			throw new IllegalArgumentException("El producto de origen no existe");
@@ -128,6 +130,8 @@ public class TransaccionService {
 					transaccion.setFechaTransaccion(LocalDateTime.now());
 				}
 			}
+			
+			logger.error("Actualizando Transaccion {}", transaccion.getTipoTransaccion());
 
 			return transaccionRepository.save(transaccion);
 		});

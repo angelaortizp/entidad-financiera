@@ -38,10 +38,12 @@ public class ClienteService {
 	private final String productoServiceUrl = "http://localhost:8081/api/productos";
 
 	public List<Cliente> getAllClientes() {
+		logger.info("Obteniendo todos los clientes");
 		return clienteRepository.findAll();
 	}
 
 	public Optional<Cliente> getClienteById(Long id) {
+		logger.info("Buscando cliente con ID: {}", id);
 		return clienteRepository.findById(id);
 	}
 
@@ -62,6 +64,7 @@ public class ClienteService {
 
 	@Transactional
 	public Cliente updateCliente(Long id, Cliente clienteDetails) {
+		 logger.info("Actualizando cliente con ID: {}", id);
 		Cliente cliente = clienteRepository.findById(id)
 				.orElseThrow(() -> new IllegalArgumentException("Cliente no encontrado con id: " + id));
 
@@ -80,6 +83,8 @@ public class ClienteService {
 		cliente.setApellidos(clienteDetails.getApellidos());
 		cliente.setCorreoElectronico(clienteDetails.getCorreoElectronico());
 		cliente.setFechaNacimiento(clienteDetails.getFechaNacimiento());
+		
+		logger.info("Cliente actualizado con éxito");
 
 		return clienteRepository.save(cliente);
 	}

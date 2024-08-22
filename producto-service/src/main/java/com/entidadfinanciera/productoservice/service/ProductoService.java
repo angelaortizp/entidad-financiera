@@ -43,6 +43,7 @@ public class ProductoService {
 	    if (producto.getNumeroCuenta() == null || producto.getNumeroCuenta().isEmpty()) {
 	        producto.setNumeroCuenta(generarNumeroCuenta(producto.getTipoCuenta()));
 	    } else {
+	    	logger.info("Validando Numero de Cuenta: {}", producto.getNumeroCuenta());
 	        validarNumeroCuenta(producto.getNumeroCuenta(), producto.getTipoCuenta());
 	    }
 	    
@@ -63,6 +64,8 @@ public class ProductoService {
         producto.setEstado(productoDetails.getEstado());
         validarSaldo(producto);
         validarNumeroCuenta(producto.getNumeroCuenta(), producto.getTipoCuenta());
+        
+        logger.info("Actualizando Producto: {}", id);
 
         return productoRepository.save(producto);
     }
