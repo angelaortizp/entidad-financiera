@@ -1,0 +1,154 @@
+{
+	"info": {
+		"_postman_id": "90110eb9-4959-4dbc-8049-ae32bb924afc",
+		"name": "Cliente Service API",
+		"description": "Colección de endpoints para el Cliente Service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9068402"
+	},
+	"item": [
+		{
+			"name": "Get All Clientes",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/clientes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"clientes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Cliente by ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/clientes/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"clientes",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Cliente",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"tipoIdentificacion\": \"CC\",\n    \"numeroIdentificacion\": \"3456789876\",\n    \"nombres\": \"Juan\",\n    \"apellidos\": \"Perez\",\n    \"correoElectronico\": \"juan.perez@example.com\",\n    \"fechaNacimiento\": \"1990-01-01\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/clientes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"clientes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Cliente",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"tipoIdentificacion\": \"CC\",\n    \"numeroIdentificacion\": \"1234567890\",\n    \"nombres\": \"Juan Carlossss\",\n    \"apellidos\": \"Perez\",\n    \"correoElectronico\": \"juan.perez@gmail.com\",\n    \"fechaNacimiento\": \"1990-01-01\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/clientes/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"clientes",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Cliente",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/clientes/199",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"clientes",
+						"199"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Productos del Cliente",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/clientes/200/productos",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"clientes",
+						"200",
+						"productos"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
